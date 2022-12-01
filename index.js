@@ -38,7 +38,7 @@ function isValidUrl(string) {
   return newUrl.protocol === "http:" || newUrl.protocol === "https:"
 }
 
-// Add post request
+// Add post request to create shortened urls
 app.post('/api/shorturl', (req, res) => {
   // Create variable url and store input into it
   let url = req.body.url;
@@ -57,7 +57,18 @@ app.post('/api/shorturl', (req, res) => {
   } else {
     res.json({error: "invalid url"});
   }
-})
+});
+
+// Create post request to redirect shortened urls to full urls
+app.get("/api/shorturl/:short_url", (req, res) => {
+  let short_url = +req.params.short_url
+  // Check if short url is in shortUrls array
+  if (shortUrls.includes(short_url)) {
+    res.redirect(fullUrls[short_url - 1]);
+  } else {
+    res.json({error: "No short URL found for the given input"});
+  }
+});
 
 app.listen(port, function() {
   console.log(`Listening on port ${port}`);
